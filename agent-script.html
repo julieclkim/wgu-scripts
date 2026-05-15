@@ -3,262 +3,195 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>WGU Student Support | Live Advisor</title>
-  <link rel="stylesheet" href="assets/wgu-demo.css" />
+  <title>WGU Student Support</title>
+  <link rel="stylesheet" href="assets/wgu-agent.css" />
 </head>
 <body>
   <div class="app-shell">
-    <header class="script-header">
+    <header class="topbar">
       <div>
         <div class="eyebrow">WGU Student Support</div>
-        <h1 id="headerName">Charles Spencer</h1>
-        <div class="header-meta">
-          <span class="pill success">Verified</span>
-          <span class="pill">Active student</span>
-          <span class="pill" id="headerProgram">RN to BSN</span>
-          <span class="pill warning" id="headerRisk">Registration risk</span>
+        <div class="title-row">
+          <h1 id="studentNameHeader">Charles Spencer</h1>
+          <span class="chip ok">Verified</span>
+          <span class="chip">Active</span>
+          <span class="chip" id="programChip">RN to BSN</span>
+          <span class="chip warn" id="riskChip">Registration risk</span>
         </div>
       </div>
-      <div class="interaction-chip">Voice interaction | Live advisor</div>
+      <div class="interaction-pill">Voice interaction | Live advisor</div>
     </header>
 
-    <main class="layout-grid">
-      <aside class="panel student-panel" aria-label="Student context">
-        <div class="panel-heading">
-          <span>Student context</span>
-          <button class="text-button" data-action="open-profile">Open profile</button>
-        </div>
+    <div id="setupNotice" class="setup-notice" hidden></div>
 
-        <section class="section-block compact">
-          <h2 id="studentName">Charles Spencer</h2>
-          <dl class="field-list">
-            <div><dt>Student ID</dt><dd id="studentId">12345</dd></div>
-            <div><dt>Program</dt><dd id="program">Nursing (RN to BSN)</dd></div>
-            <div><dt>Status</dt><dd id="status">Active</dd></div>
-            <div><dt>Mentor</dt><dd id="mentor">Carla Espinosa</dd></div>
+    <main class="three-col">
+      <aside class="panel context-panel">
+        <div class="panel-title">Student context</div>
+
+        <section class="card tight-card">
+          <div class="student-block">
+            <div>
+              <h2 id="studentName">Charles Spencer</h2>
+              <p id="studentMeta">ID 12345 | Nursing, RN to BSN</p>
+            </div>
+            <span class="status-dot">Live</span>
+          </div>
+          <dl class="mini-fields">
+            <div><dt>Mentor</dt><dd id="mentorName">Carla Espinosa</dd></div>
+            <div><dt>Phone</dt><dd id="phoneNumber">+16054311804</dd></div>
+            <div><dt>Email</dt><dd id="emailAddress">julie.genesys.test@gmail.com</dd></div>
           </dl>
         </section>
 
-        <section class="section-block">
-          <h3>Contact reason</h3>
-          <p id="contactReason">Financial hold may prevent registration</p>
+        <section class="card">
+          <h3>Why they called</h3>
+          <p id="contactReason">Financial hold may prevent registration.</p>
         </section>
 
-        <section class="section-block">
-          <h3>Account snapshot</h3>
-          <dl class="field-list condensed">
+        <section class="card">
+          <h3>Account</h3>
+          <dl class="mini-fields compact">
             <div><dt>Balance</dt><dd id="balanceDue">$1,600</dd></div>
-            <div><dt>Hold reason</dt><dd id="holdReason">Overdue balance</dd></div>
+            <div><dt>Hold</dt><dd id="holdReason">Overdue balance</dd></div>
             <div><dt>Aid</dt><dd id="aidStatus">Pending disbursement</dd></div>
             <div><dt>Expected</dt><dd id="aidDate">May 28, 2026</dd></div>
-            <div><dt>Payment plan</dt><dd id="paymentPlan">Available</dd></div>
-            <div><dt>Email sent</dt><dd id="paymentEmailSent">Yes</dd></div>
+            <div><dt>Plan</dt><dd id="paymentPlan">Available</dd></div>
+            <div><dt>Min pay</dt><dd id="minimumPayment">$65.90</dd></div>
           </dl>
         </section>
 
-        <section class="section-block">
-          <h3>Student context</h3>
-          <ul class="bullets tight" id="studentContextBullets">
+        <section class="card note-card">
+          <h3>Student pressure</h3>
+          <ul class="plain-list" id="pressureList">
             <li>Working full-time as an RN</li>
             <li>Behind on Evidence-Based Practice task</li>
-            <li>Concerned about registration</li>
+            <li>Worried about registration</li>
           </ul>
-        </section>
-
-        <section class="section-block callout soft">
-          <h3>Transfer summary</h3>
-          <p id="transferSummary">Verified before handoff. Balance reviewed. Payment plan email sent. Student expressed payment concern and course overwhelm.</p>
         </section>
       </aside>
 
-      <section class="panel guide-panel" aria-label="Live call guide">
-        <div class="panel-heading sticky-heading">
-          <span>Live call guide</span>
-          <div class="step-nav" aria-label="Guide sections">
-            <a href="#start">Start</a>
-            <a href="#financial">Financial</a>
-            <a href="#academic">Academic</a>
-            <a href="#wrap">Wrap</a>
-          </div>
-        </div>
+      <section class="panel guide-panel">
+        <div class="panel-title">Live call guide</div>
 
-        <article class="guide-step" id="start">
-          <div class="step-number">1</div>
-          <div class="step-content">
-            <h2>Start</h2>
-            <p class="label">Suggested opener</p>
-            <blockquote id="openingPrompt">Hi Charles, this is [Advisor Name] with WGU. I have the notes from your conversation, so you do not need to start over. I see you are calling about a financial hold, you received payment plan information, and you are also trying to keep up with nursing coursework while working full time. Is that right?</blockquote>
-            <p class="label">Ask</p>
-            <p>Is that right?</p>
-            <div class="status-list">
-              <label><input type="checkbox" id="status-summary-confirmed" /> Summary confirmed</label>
-            </div>
-            <div class="inline-actions">
-              <button data-action="confirm-summary">Confirm summary</button>
-              <button data-action="history">View handoff history</button>
-            </div>
+        <article class="step-card" id="start">
+          <div class="step-head">
+            <span class="step-num">1</span>
+            <h2>Confirm handoff</h2>
+          </div>
+          <div class="prompt-box" id="openerText">
+            Hi Charles, Sage handed me the notes, so you do not need to start over. I see this is about the hold, the payment plan email, and staying on track while working full time. Did I get that right?
+          </div>
+          <label class="check-row"><input id="summaryConfirmed" type="checkbox" /> Summary confirmed</label>
+          <div class="row-actions">
+            <button data-action="confirm-summary">Confirm</button>
+            <button class="secondary" data-action="history">View handoff</button>
           </div>
         </article>
 
-        <article class="guide-step" id="financial">
-          <div class="step-number">2</div>
-          <div class="step-content">
+        <article class="step-card" id="financial">
+          <div class="step-head">
+            <span class="step-num">2</span>
             <h2>Financial hold</h2>
-            <p class="label">Ask</p>
-            <p>Did the payment plan email come through?</p>
-            <p>Is your biggest concern the balance, the timing of aid, or the payment amount?</p>
+          </div>
+          <div class="guide-grid">
+            <div>
+              <div class="label">Ask</div>
+              <ul class="plain-list short">
+                <li>Did the payment plan email arrive?</li>
+                <li>Is the concern balance, aid timing, or payment amount?</li>
+              </ul>
+            </div>
             <div class="guardrail">
-              <strong>Guardrail:</strong> Do not promise hold removal, aid timing, payment-plan approval, or registration access.
+              <div class="label">Guardrail</div>
+              Do not promise hold removal, aid timing, approval, or registration access.
             </div>
-            <div class="status-list">
-              <label><input type="checkbox" id="status-payment-email-confirmed" /> Payment email confirmed</label>
-              <label><input type="checkbox" id="status-payment-concern-documented" /> Payment concern documented</label>
-              <label><input type="checkbox" id="status-sfs-followup-requested" /> SFS follow-up requested</label>
-            </div>
-            <div class="inline-actions">
-              <button data-action="document-payment-concern">Document payment concern</button>
-              <button data-action="sfs-referral">Create SFS referral</button>
-              <button data-action="payment-portal">Open payment portal</button>
-            </div>
+          </div>
+          <div class="check-grid">
+            <label><input id="emailConfirmed" type="checkbox" /> Email confirmed</label>
+            <label><input id="concernDocumented" type="checkbox" /> Concern documented</label>
+            <label><input id="sfsRequested" type="checkbox" /> SFS referral requested</label>
+          </div>
+          <div class="row-actions">
+            <button data-action="payment-portal">Payment info</button>
+            <button data-action="sfs-referral">Create SFS referral</button>
           </div>
         </article>
 
-        <article class="guide-step" id="academic">
-          <div class="step-number">3</div>
-          <div class="step-content">
+        <article class="step-card" id="academic">
+          <div class="step-head">
+            <span class="step-num">3</span>
             <h2>Academic momentum</h2>
-            <p class="label">Ask</p>
-            <p>What part of the course feels most at risk?</p>
-            <p>Is the blocker time, assignment requirements, writing structure, or content?</p>
-            <div class="two-column-note">
-              <div>
-                <p class="label">Route to Course Instructor if</p>
-                <ul class="bullets tight">
-                  <li>Assignment requirements are unclear</li>
-                  <li>Course content is the blocker</li>
-                  <li>Assessment guidance is needed</li>
-                </ul>
-              </div>
-              <div>
-                <p class="label">Route to Program Mentor if</p>
-                <ul class="bullets tight">
-                  <li>Pacing is the blocker</li>
-                  <li>Time management needs support</li>
-                  <li>Term plan needs adjustment</li>
-                </ul>
-              </div>
+          </div>
+          <div class="guide-grid">
+            <div>
+              <div class="label">Ask</div>
+              <ul class="plain-list short">
+                <li>What part feels most at risk?</li>
+                <li>Is the blocker time, assignment, content, or readiness?</li>
+              </ul>
             </div>
-            <p class="advisor-prompt">Is the blocker the assignment itself, organizing the writing, or finding time after shifts?</p>
-            <div class="status-list">
-              <label><input type="checkbox" id="status-course-progress-reviewed" /> Course progress reviewed</label>
-              <label><input type="checkbox" id="status-mentor-note-added" /> Mentor note added</label>
-              <label><input type="checkbox" id="status-followup-scheduled" /> Follow-up scheduled</label>
-            </div>
-            <div class="inline-actions">
-              <button data-action="course-progress">Open course progress</button>
-              <button data-action="mentor-note">Add mentor note</button>
-              <button data-action="schedule">Schedule follow-up</button>
+            <div class="plan-box">
+              <div class="label">Suggested plan</div>
+              2 study blocks, 45 minutes each. 1 assessment review, 30 minutes.
             </div>
           </div>
-        </article>
-
-        <article class="guide-step" id="wrap">
-          <div class="step-number">4</div>
-          <div class="step-content">
-            <h2>Wrap-up</h2>
-            <p class="label">Suggested close</p>
-            <blockquote>We may not have solved every piece in one call, but we turned it from a pile of stress into a plan.</blockquote>
-            <div class="wrap-grid">
-              <div>
-                <p class="label">Financial next step</p>
-                <ul class="bullets tight">
-                  <li>Payment plan email reviewed</li>
-                  <li>Student Financial Services follow-up requested</li>
-                  <li>Aid timing and payment concern documented</li>
-                </ul>
-              </div>
-              <div>
-                <p class="label">Academic next step</p>
-                <ul class="bullets tight">
-                  <li>Two 45-minute writing blocks</li>
-                  <li>One 30-minute outline review</li>
-                  <li>Monday afternoon follow-up</li>
-                </ul>
-              </div>
-            </div>
-            <div class="status-list">
-              <label><input type="checkbox" id="status-recap-sent" /> Recap sent</label>
-              <label><input type="checkbox" id="status-wrapup-completed" /> Wrap-up completed</label>
-            </div>
-            <div class="inline-actions">
-              <button data-action="recap">Send recap email</button>
-              <button data-action="complete-wrap" class="primary">Complete wrap-up</button>
-            </div>
+          <div class="route-strip">
+            <span><b>Course Instructor:</b> content, requirements, assessment help</span>
+            <span><b>Program Mentor:</b> pacing, time, term plan</span>
+          </div>
+          <div class="check-grid">
+            <label><input id="courseReviewed" type="checkbox" /> Progress reviewed</label>
+            <label><input id="mentorNoteAdded" type="checkbox" /> Mentor note added</label>
+            <label><input id="followupScheduled" type="checkbox" /> Follow-up scheduled</label>
+          </div>
+          <div class="row-actions">
+            <button data-action="course-progress">Course progress</button>
+            <button data-action="mentor-note">Mentor note</button>
+            <button data-action="schedule">Schedule</button>
           </div>
         </article>
       </section>
 
-      <aside class="panel tools-panel" aria-label="Quick tools">
-        <div class="panel-heading">
-          <span>Quick tools</span>
-        </div>
+      <aside class="panel tools-panel">
+        <div class="panel-title">Quick tools</div>
 
-        <div class="tool-group">
-          <h3>Student</h3>
+        <div class="tool-stack">
           <button data-action="open-profile">Open profile</button>
-          <button data-action="history">History</button>
-        </div>
-
-        <div class="tool-group">
-          <h3>Financial</h3>
-          <button data-action="payment-portal">Payment portal</button>
-          <button data-action="sfs-referral">Create SFS ref</button>
-        </div>
-
-        <div class="tool-group">
-          <h3>Academic</h3>
+          <button data-action="history">Handoff history</button>
+          <button data-action="payment-portal">Payment info</button>
+          <button data-action="sfs-referral">Create SFS referral</button>
           <button data-action="course-progress">Course progress</button>
           <button data-action="mentor-note">Mentor note</button>
+          <button data-action="schedule">Schedule follow-up</button>
         </div>
 
-        <div class="tool-group">
-          <h3>Follow-up</h3>
-          <button data-action="schedule">Schedule</button>
-          <button data-action="recap">Send recap</button>
-        </div>
-
-        <div class="tool-group">
-          <h3>Wrap</h3>
-          <button data-action="complete-wrap" class="primary full-width">Complete wrap</button>
-        </div>
-
-        <div class="activity-card">
-          <div class="panel-heading small">
-            <span>Activity log</span>
-            <button class="text-button" data-action="clear-log">Clear</button>
+        <section class="log-card">
+          <div class="log-head">
+            <h3>Activity log</h3>
+            <button class="text-btn" data-action="clear-log">Clear</button>
           </div>
-          <ol id="activityLog" class="activity-log" aria-live="polite"></ol>
-        </div>
+          <ol id="activityLog" class="activity-log"></ol>
+        </section>
       </aside>
     </main>
   </div>
 
-  <div class="modal-backdrop" id="modalBackdrop" hidden>
+  <div id="modalBackdrop" class="modal-backdrop" hidden>
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <div class="modal-header">
+      <header class="modal-header">
         <div>
-          <div class="eyebrow" id="modalKicker">Demo action</div>
+          <div id="modalKicker" class="modal-kicker">Demo action</div>
           <h2 id="modalTitle">Action</h2>
         </div>
-        <button class="icon-button" id="modalClose" aria-label="Close">×</button>
-      </div>
-      <div class="modal-body" id="modalBody"></div>
-      <div class="modal-footer" id="modalFooter"></div>
+        <button class="icon-btn" data-close-modal aria-label="Close dialog">×</button>
+      </header>
+      <div id="modalBody" class="modal-body"></div>
+      <footer id="modalFooter" class="modal-footer"></footer>
     </div>
   </div>
 
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div id="toast" class="toast" aria-live="polite"></div>
 
-  <script src="assets/wgu-demo.js"></script>
+  <script src="assets/wgu-agent.js"></script>
 </body>
 </html>

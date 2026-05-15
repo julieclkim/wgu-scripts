@@ -1,28 +1,26 @@
-# Genesys setup
+# Genesys setup checklist
 
-1. Create a Genesys Cloud Script.
-2. Add a string input variable named `StudentId`.
-3. Add a Web Page component.
-4. Set the Web Page Source to your GitHub Pages URL:
-
-```text
-https://YOUR-GITHUB-USERNAME.github.io/YOUR-REPO/agent-script.html?StudentId=<insert Genesys StudentId variable>
-```
-
-5. Enable the script for inbound.
-6. Publish the script.
-7. In Architect, add Set Screen Pop before Transfer to ACD.
-8. Select the published script.
-9. Map the virtual agent's collected student ID into the script input:
+1. Upload the files to the root of the GitHub repo.
+2. Enable GitHub Pages from `main` and `/root`.
+3. Test in the browser:
 
 ```text
-StudentId = Flow.StudentId
+https://julieclkim.github.io/wgu-scripts/agent-script.html?StudentId=12345
 ```
 
-Test first with a hardcoded value:
+4. In Genesys Cloud, create a new script named `WGU Student Support`.
+5. Add a string input variable named `StudentId`.
+6. Add a Web Page component.
+7. Set the Web Page Source to your GitHub Pages URL with `StudentId=` and insert the Genesys variable after the equals sign.
+8. Enable Inbound on the script.
+9. Publish the script.
+10. In Architect, add Set Screen Pop before Transfer to ACD.
+11. Map the collected student ID into the `StudentId` script input.
+
+Recommended first test:
 
 ```text
 StudentId = "12345"
 ```
 
-If Charles appears, the GitHub page and Genesys Script are configured correctly. Then replace the hardcoded value with the actual flow variable.
+After that works, replace the hardcoded value with the flow variable that contains the student ID.
