@@ -1,72 +1,40 @@
-# WGU Student Support Demo
+# WGU Student Support, Minimal Live Agent Panel
 
-This is a minimal Genesys Cloud web script for a live advisor demo. It is designed to stay lightweight in an agent iframe during a call.
+This is a compact Genesys Cloud iframe page for a WGU live advisor demo.
 
-## Primary demo URL
+It is intentionally minimal and designed for an agent on a live call. It contains:
 
-```text
-https://YOUR-GITHUB-USERNAME.github.io/YOUR-REPO/agent-script.html?StudentId=12345
-```
+- Student snapshot
+- Financial hold cues
+- Academic momentum cues
+- Quick action popups
+- Activity log
 
-For Julie's repo:
+It does not include wrap-up, recap email, or long script text.
+
+## Test URLs
 
 ```text
 https://julieclkim.github.io/wgu-scripts/agent-script.html?StudentId=12345
 ```
 
-## Student lookup
-
-The page reads the student ID from any of these URL parameters:
-
 ```text
-StudentId
-studentId
-student_id
-studentID
-key
-id
+https://julieclkim.github.io/wgu-scripts/agent-script.html?StudentId=941115
 ```
 
-The student records are in:
+## GitHub Pages
+
+Upload these files to the root of the repo:
 
 ```text
+agent-script.html
+index.html
+assets/wgu-call-panel.css
+assets/wgu-call-panel.js
 data/students.json
+README.md
+GENESYS-SETUP.md
+.nojekyll
 ```
 
-## Genesys Cloud setup
-
-Create a Genesys script input variable:
-
-```text
-Name: StudentId
-Type: String
-Input: Yes
-Output: No
-```
-
-Add a Web Page component and set the URL to:
-
-```text
-https://julieclkim.github.io/wgu-scripts/agent-script.html?StudentId=<insert Genesys StudentId variable>
-```
-
-Use the Genesys variable picker for the value after `StudentId=`. Do not type curly braces manually.
-
-## What the page includes
-
-- Student context
-- Financial hold guide
-- Academic momentum guide
-- Quick tools
-- Dummy popups for profile, handoff history, payment info, SFS referral, course progress, mentor note, and follow-up scheduling
-- On-screen activity log
-
-## What is intentionally removed
-
-- Wrap-up page
-- Wrap-up disposition
-- Recap email
-- Long advisor scripts
-- Backend writes to Genesys
-
-All button actions are demo-only and update the page UI only.
+Then enable GitHub Pages from Settings, Pages, Deploy from branch, main, root.
