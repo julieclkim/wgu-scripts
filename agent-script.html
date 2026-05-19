@@ -4,140 +4,151 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>WGU Student Support</title>
-  <link rel="stylesheet" href="assets/wgu-call-panel.css" />
+  <link rel="stylesheet" href="assets/wgu-finance-minimal.css" />
 </head>
 <body>
-  <div class="shell">
+  <div id="app" class="app-shell">
     <header class="topbar">
       <div>
-        <div class="brand">WGU Student Support</div>
-        <div class="headline">
-          <span id="headerName">Student</span>
-          <span class="pill ok">Verified</span>
-          <span class="pill">Active</span>
-          <span class="pill" id="headerProgram">RN to BSN</span>
-          <span class="pill warn" id="headerRisk">Registration risk</span>
+        <div class="eyebrow">WGU Student Support</div>
+        <div class="student-heading">
+          <h1 data-bind="full_name">Loading student...</h1>
+          <span class="pill verified">Verified</span>
+          <span class="pill" data-bind="student_type">Active</span>
         </div>
+        <p class="subline"><span data-bind="key">-</span> · <span data-bind="program">-</span></p>
       </div>
       <div class="interaction">Voice interaction | Live advisor</div>
     </header>
 
-    <div id="setupNotice" class="notice" hidden></div>
+    <div id="setupWarning" class="setup-warning" hidden></div>
 
-    <main class="layout">
-      <aside class="panel context">
-        <div class="panel-title">Student</div>
-        <h1 id="studentName">Charles Spencer</h1>
-        <div class="muted" id="studentIdLine">ID 12345</div>
+    <nav class="tabs" aria-label="Student support tabs">
+      <button class="tab is-active" type="button" data-tab-target="snapshot">Student</button>
+      <button class="tab" type="button" data-tab-target="financial">Financial</button>
+    </nav>
 
-        <div class="field-list">
-          <div><span>Program</span><strong id="program">Nursing, RN to BSN</strong></div>
-          <div><span>Mentor</span><strong id="mentor">Carla Espinosa</strong></div>
-          <div><span>Phone</span><strong id="phone">+16054311804</strong></div>
-          <div><span>Email</span><strong id="email">julie.genesys.test@gmail.com</strong></div>
+    <main class="workspace">
+      <section class="content-card tab-panel is-active" id="snapshot" aria-labelledby="student-tab">
+        <div class="section-head">
+          <h2>Student snapshot</h2>
+          <span class="status-chip" data-bind="risk_flag">Risk</span>
         </div>
 
-        <div class="section-block">
-          <div class="label">Reason</div>
-          <p id="reason">Financial hold may prevent registration.</p>
+        <div class="summary-grid compact">
+          <div class="field">
+            <span>Student ID</span>
+            <strong data-bind="key">-</strong>
+          </div>
+          <div class="field">
+            <span>Program</span>
+            <strong data-bind="program">-</strong>
+          </div>
+          <div class="field">
+            <span>Status</span>
+            <strong data-bind="enrollment_status">-</strong>
+          </div>
+          <div class="field">
+            <span>Mentor</span>
+            <strong data-bind="mentorName">-</strong>
+          </div>
+          <div class="field">
+            <span>Phone</span>
+            <strong data-bind="phone_number">-</strong>
+          </div>
+          <div class="field">
+            <span>Email</span>
+            <strong data-bind="email">-</strong>
+          </div>
         </div>
 
-        <div class="section-block compact-grid">
-          <div><span>Balance</span><strong id="balance">$1600</strong></div>
-          <div><span>Aid</span><strong id="aid">Pending Disbursement</strong></div>
-          <div><span>Expected</span><strong id="aidDate">May 28, 2026</strong></div>
-          <div><span>Hold</span><strong id="hold">Overdue balance</strong></div>
+        <div class="two-column tight">
+          <article class="mini-card">
+            <h3>Reason</h3>
+            <p data-bind="contactReason">Financial hold may prevent registration.</p>
+          </article>
+          <article class="mini-card">
+            <h3>Current course focus</h3>
+            <p data-bind="current_course_focus">-</p>
+          </article>
         </div>
 
-        <div class="section-block">
-          <div class="label">Student pressure</div>
-          <ul class="mini-list" id="pressureList"></ul>
-        </div>
-      </aside>
-
-      <section class="panel guide">
-        <div class="panel-title">Live call guide</div>
-
-        <article class="cue-card active">
-          <div class="step-label">1. Confirm handoff</div>
-          <div class="say-line" id="opener">Sage gave me the notes. I see the hold, payment plan email, and course pressure. Did I get that right?</div>
-          <label class="check"><input id="summaryConfirmed" type="checkbox" /> Summary confirmed</label>
-        </article>
-
-        <article class="cue-card">
-          <div class="step-label">2. Financial hold</div>
-          <div class="ask-grid">
-            <div>
-              <div class="label">Ask</div>
-              <p>Did the payment plan email arrive?</p>
-              <p>Is the concern balance, aid timing, or payment amount?</p>
-            </div>
-            <div>
-              <div class="label">Guardrail</div>
-              <p>Do not promise hold removal, aid timing, approval, or registration access.</p>
-            </div>
-          </div>
-          <div class="status-row">
-            <label><input id="paymentEmailConfirmed" type="checkbox" /> Email confirmed</label>
-            <label><input id="sfsCreated" type="checkbox" /> SFS referral</label>
-          </div>
-        </article>
-
-        <article class="cue-card">
-          <div class="step-label">3. Academic momentum</div>
-          <div class="ask-grid">
-            <div>
-              <div class="label">Ask</div>
-              <p>Is the blocker time, assignment, content, or readiness?</p>
-            </div>
-            <div>
-              <div class="label">Plan</div>
-              <p>Two 45 minute study blocks plus one 30 minute review.</p>
-            </div>
-          </div>
-          <div class="status-row">
-            <label><input id="courseReviewed" type="checkbox" /> Progress reviewed</label>
-            <label><input id="mentorNoteAdded" type="checkbox" /> Mentor note</label>
-            <label><input id="followupScheduled" type="checkbox" /> Follow-up</label>
-          </div>
+        <article class="mini-card note-card">
+          <h3>Student note</h3>
+          <p data-bind="student_notes">-</p>
         </article>
       </section>
 
-      <aside class="panel tools">
-        <div class="panel-title">Quick tools</div>
-        <div class="tool-grid">
-          <button data-action="profile">Profile</button>
-          <button data-action="history">History</button>
-          <button data-action="payment">Payment</button>
-          <button data-action="sfs">SFS referral</button>
-          <button data-action="course">Course</button>
-          <button data-action="mentor-note">Mentor note</button>
-          <button data-action="schedule">Schedule</button>
+      <section class="content-card tab-panel" id="financial" aria-labelledby="financial-tab" hidden>
+        <div class="section-head">
+          <h2>Financial overview</h2>
+          <span class="status-chip amber" data-bind="account_hold_display">Hold</span>
         </div>
 
-        <div class="log-card">
-          <div class="log-title">Activity log</div>
+        <div class="finance-strip">
+          <div>
+            <span>Balance</span>
+            <strong data-bind="balance_due">-</strong>
+          </div>
+          <div>
+            <span>Aid status</span>
+            <strong data-bind="financial_aid_status">-</strong>
+          </div>
+          <div>
+            <span>Expected aid</span>
+            <strong data-bind="aid_disbursement_date">-</strong>
+          </div>
+          <div>
+            <span>Due date</span>
+            <strong data-bind="payment_due_date">-</strong>
+          </div>
+        </div>
+
+        <div class="two-column">
+          <button class="plan-card" type="button" data-action="viewPlans">
+            <span>Eligible payment plan</span>
+            <strong data-bind="payment_plan_available_display">Available</strong>
+            <small>View 3-payment and 4-payment breakdowns</small>
+          </button>
+
+          <article class="mini-card">
+            <h3>Aid awards</h3>
+            <dl class="kv-list">
+              <div><dt>Approved</dt><dd data-bind="approved_aid_amount">-</dd></div>
+              <div><dt>Grant</dt><dd data-bind="grant_amount">-</dd></div>
+              <div><dt>Loan</dt><dd data-bind="loan_amount">-</dd></div>
+            </dl>
+          </article>
+        </div>
+      </section>
+
+      <aside class="side-card" aria-label="Actions and activity">
+        <div class="section-head small">
+          <h2>Actions</h2>
+        </div>
+        <div class="action-list">
+          <button type="button" data-action="sendPlanEmail">Send Payment Plan Link</button>
+          <button type="button" data-action="openAccount">Open Student Account</button>
+          <button type="button" data-action="createSfs">Create Financial Services Follow-Up</button>
+          <button type="button" data-action="scheduleAdvisor">Schedule Advisor Call</button>
+          <button type="button" data-action="transferTier2">Transfer to Tier II / Specialist</button>
+        </div>
+
+        <div class="activity-box">
+          <h3>Activity</h3>
           <ol id="activityLog"></ol>
         </div>
       </aside>
     </main>
   </div>
 
-  <div id="modalBackdrop" class="modal-backdrop" hidden>
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <header class="modal-header">
-        <div>
-          <div id="modalKicker" class="modal-kicker">Demo action</div>
-          <h2 id="modalTitle">Action</h2>
-        </div>
-        <button class="close" data-close-modal aria-label="Close">x</button>
-      </header>
-      <div id="modalBody" class="modal-body"></div>
-      <footer id="modalFooter" class="modal-footer"></footer>
-    </div>
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" type="button" aria-label="Close" data-close-modal>×</button>
+      <div id="modalContent"></div>
+    </section>
   </div>
 
-  <div id="toast" class="toast" aria-live="polite"></div>
-  <script src="assets/wgu-call-panel.js"></script>
+  <script src="assets/wgu-finance-minimal.js"></script>
 </body>
 </html>

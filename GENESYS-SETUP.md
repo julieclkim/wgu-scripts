@@ -1,20 +1,42 @@
-# Genesys setup
+# Genesys Cloud Setup
 
-1. Create a Genesys Cloud Script.
-2. Add a string input variable named StudentId.
-3. Add a Web Page component.
-4. Use this URL:
+## 1. Host files on GitHub Pages
+
+Upload the contents of this folder to the root of the GitHub repo and enable Pages from `main` and `/root`.
+
+## 2. Create script variable
+
+Create a Genesys Cloud Script input variable:
+
+```text
+Name: StudentId
+Type: String
+Input: Yes
+Output: No
+```
+
+## 3. Add Web Page component
+
+Use this URL:
 
 ```text
 https://julieclkim.github.io/wgu-scripts/agent-script.html?StudentId=<insert Genesys StudentId variable>
 ```
 
-Do not type curly braces manually. Insert the StudentId variable using the Genesys variable picker.
+## 4. Publish script and enable inbound
 
-For a hardcoded test, use:
+Make sure the script is published and inbound-enabled before selecting it in Architect.
+
+## 5. Architect mapping
+
+In Set Screen Pop, map the collected virtual agent student ID to the script input variable:
 
 ```text
-https://julieclkim.github.io/wgu-scripts/agent-script.html?StudentId=12345
+StudentId = Flow.StudentId
 ```
 
-Enable Inbound, save, and publish the script. In Architect, use Set Screen Pop before Transfer to ACD and map the collected student ID into StudentId.
+For a hardcoded test:
+
+```text
+StudentId = "12345"
+```
