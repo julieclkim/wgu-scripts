@@ -1,10 +1,4 @@
 (() => {
-  const DATA_ACTION = {
-    name: "julie - Send Agentless Email v3",
-    endpoint: "/api/v2/conversations/emails/agentless",
-    integrationType: "purecloud-data-actions"
-  };
-
   const EMAIL_CONFIG = {
     fromAddress_email: "info@mail.gcgovsc12.org",
     fromAddress_name: "WGU Student Financial Services",
@@ -16,7 +10,7 @@
     students: {},
     student: null,
     studentId: null,
-    lastDataActionRequest: null
+    lastEmailRequest: null
   };
 
   const $ = (selector, root = document) => root.querySelector(selector);
@@ -229,25 +223,73 @@
 </div>`;
   }
 
-  function buildEmailDataActionRequest() {
+  function buildPaymentPlanEmailRequest() {
     const s = state.student;
     const subject = `WGU payment plan options for account ${s.payment_reference_id || s.key}`;
     const htmlBody = renderPaymentPlanEmailHtml(s);
-    const inputs = {
-      fromAddress_email: EMAIL_CONFIG.fromAddress_email,
-      fromAddress_name: EMAIL_CONFIG.fromAddress_name,
-      toAddress_email: s.email,
-      toAddress_name: s.full_name,
-      replyToAddress_email: EMAIL_CONFIG.replyToAddress_email,
-      replyToAddress_name: EMAIL_CONFIG.replyToAddress_name,
-      subject,
-      htmlBody
+    const plan3 = getPlanRows(3);
+    const plan4 = getPlanRows(4);
+    const planText = [
+      "3-payment option:",
+      ...plan3.map((row) => `Payment ${row.payment}: ${row.amount} due ${row.dueDate}`),
+      "",
+      "4-payment option:",
+      ...plan4.map((row) => `Payment ${row.payment}: ${row.amount} due ${row.dueDate}`)
+    ].join("\n");
+
+    const messageText = [
+      `Hi ${getFirstName()},`,
+      "",
+      "Here are payment plan options based on the current balance shown on your WGU account.",
+      "",
+      `Student ID: ${s.key}`,
+      `Current balance: ${s.balance_due}`,
+      `Financial aid status: ${s.financial_aid_status}`,
+      `Expected disbursement: ${s.aid_disbursement_date}`,
+      `Payment reference: ${s.payment_reference_id || s.key}`,
+      "",
+      planText,
+      "",
+      "Final eligibility, enrollment fee, payment method, and due dates are confirmed in the student portal by Student Financial Services.",
+      `Student portal: ${s.payment_portal_url || "https://my.wgu.edu/"}`
+    ].join("\n");
+
+    const formSubmitPayload = {
+      name: EMAIL_CONFIG.fromAddress_name,
+      email: EMAIL_CONFIG.replyToAddress_email,
+      _replyto: EMAIL_CONFIG.replyToAddress_email,
+      _subject: subject,
+      _template: "table",
+      _captcha: "false",
+      "Student name": s.full_name,
+      "Student ID": s.key,
+      "Program": s.program,
+      "Current balance": s.balance_due,
+      "Financial aid status": s.financial_aid_status,
+      "Expected aid date": s.aid_disbursement_date,
+      "Payment reference": s.payment_reference_id || s.key,
+      "3-payment option": plan3.map((row) => `Payment ${row.payment}: ${row.amount} due ${row.dueDate}`).join(" | "),
+      "4-payment option": plan4.map((row) => `Payment ${row.payment}: ${row.amount} due ${row.dueDate}`).join(" | "),
+      "Advisor note": "Payment plan options shared for student review. Final eligibility and dates are confirmed in the student portal.",
+      message: messageText
     };
 
     return {
-      eventType: "WGU_SEND_PAYMENT_PLAN_EMAIL",
-      dataAction: DATA_ACTION,
-      inputs,
+      eventType: "WGU_PAYMENT_PLAN_EMAIL",
+      provider: "FormSubmit",
+      endpoint: `https://formsubmit.co/ajax/${encodeURIComponent(s.email)}`,
+      inputs: {
+        fromAddress_email: EMAIL_CONFIG.fromAddress_email,
+        fromAddress_name: EMAIL_CONFIG.fromAddress_name,
+        toAddress_email: s.email,
+        toAddress_name: s.full_name,
+        replyToAddress_email: EMAIL_CONFIG.replyToAddress_email,
+        replyToAddress_name: EMAIL_CONFIG.replyToAddress_name,
+        subject,
+        htmlBody,
+        messageText
+      },
+      formSubmitPayload,
       student: {
         key: s.key,
         full_name: s.full_name,
@@ -325,7 +367,7 @@
   function showCreateSfs() {
     const s = state.student;
     const html = `
-      ${modalHeader("Financial Services follow-up", "Demo-only form. No record is written back from this page.")}
+      ${modalHeader("Financial Services follow-up", "Review and submit a follow-up request.")}
         <form id="sfsForm" class="form-stack">
           <label>Reason
             <input value="Financial hold and payment plan review" />
@@ -355,7 +397,7 @@
   function showTransferTier2() {
     const s = state.student;
     const html = `
-      ${modalHeader("Transfer to Tier II / Specialist", "Demo-only transfer panel.")}
+      ${modalHeader("Transfer to Tier II / Specialist", "Select the specialist queue and share account context.")}
         <form id="transferForm" class="form-stack">
           <label>Queue
             <select>
@@ -383,47 +425,54 @@
     });
   }
 
-  async function requestGenesysDataAction(request) {
-    state.lastDataActionRequest = request;
-    window.dispatchEvent(new CustomEvent("wgu:sendPaymentPlanEmail", { detail: request }));
+  async function sendPaymentPlanEmail(request) {
+    state.lastEmailRequest = request;
+    window.dispatchEvent(new CustomEvent("wgu:paymentPlanEmailRequested", { detail: request }));
 
-    if (window.parent && window.parent !== window) {
-      window.parent.postMessage(request, "*");
+    const response = await fetch(request.endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify(request.formSubmitPayload)
+    });
+
+    let body = {};
+    try {
+      body = await response.json();
+    } catch (_) {
+      body = {};
     }
 
-    if (window.WGUGenesysBridge && typeof window.WGUGenesysBridge.sendPaymentPlanEmail === "function") {
-      return window.WGUGenesysBridge.sendPaymentPlanEmail(request);
+    if (!response.ok) {
+      throw new Error(body.message || body.error || "Email service returned an error.");
     }
 
-    return {
-      sent: false,
-      reason: "No Genesys data action bridge detected. Request was generated and posted to parent frame."
-    };
+    return body;
   }
 
   function showSendPlanEmail() {
     const s = state.student;
-    const request = buildEmailDataActionRequest();
+    const request = buildPaymentPlanEmailRequest();
     const emailPreview = request.inputs.htmlBody;
-    const payloadText = JSON.stringify(request.inputs, null, 2);
-    const senderWarning = request.inputs.fromAddress_email.includes("REPLACE_WITH");
+    const messageText = request.inputs.messageText;
 
     const html = `
-      ${modalHeader("Send Payment Plan Link", `To ${s.full_name} · ${s.email}`)}
-        ${senderWarning ? `<div class="notice warning">Sender email is configured for Genesys agentless email.</div>` : ""}
+      ${modalHeader("Send payment plan email", `To ${s.full_name} · ${s.email}`)}
         <div class="modal-grid" style="margin:12px 0;">
-          <div class="modal-field"><span>Data action</span><strong>${escapeHtml(DATA_ACTION.name)}</strong></div>
           <div class="modal-field"><span>Recipient</span><strong>${escapeHtml(s.email)}</strong></div>
           <div class="modal-field"><span>Subject</span><strong>${escapeHtml(request.inputs.subject)}</strong></div>
           <div class="modal-field"><span>Balance</span><strong>${escapeHtml(s.balance_due)}</strong></div>
+          <div class="modal-field"><span>Reference</span><strong>${escapeHtml(s.payment_reference_id || s.key)}</strong></div>
         </div>
         <div class="email-preview" aria-label="Payment plan email preview">${emailPreview}</div>
         <details style="margin-top:12px;">
-          <summary>View Data Action input payload</summary>
-          <textarea class="payload-code" readonly>${escapeHtml(payloadText)}</textarea>
+          <summary>View plain-text email details</summary>
+          <textarea class="message-code" readonly>${escapeHtml(messageText)}</textarea>
         </details>
         <div class="button-row">
-          <button class="primary-btn" type="button" id="sendEmailActionButton">Send through Genesys Data Action</button>
+          <button class="primary-btn" type="button" id="sendEmailActionButton">Send email</button>
           <button class="secondary-btn" type="button" data-close-modal>Cancel</button>
         </div>
         <div id="sendEmailStatus" class="notice" style="margin-top:12px;" hidden></div>
@@ -433,24 +482,40 @@
     openModal(html, (root) => {
       $("#sendEmailActionButton", root).addEventListener("click", async () => {
         const status = $("#sendEmailStatus", root);
+        const button = $("#sendEmailActionButton", root);
         status.hidden = false;
-        status.textContent = "Sending request to Genesys Data Action...";
-        const result = await requestGenesysDataAction(request);
-        if (result && result.sent) {
-          status.textContent = "Payment plan email sent through Genesys Data Action.";
+        status.textContent = "Sending payment plan email...";
+        button.disabled = true;
+        try {
+          await sendPaymentPlanEmail(request);
+          status.textContent = "Email request sent. Check the student inbox. First-time use may require confirming an activation email before delivery completes.";
           logActivity("Payment plan email sent");
-        } else {
-          status.textContent = result.reason || "Data Action request generated. Genesys bridge required for delivery.";
-          logActivity("Payment plan email request generated");
+        } catch (error) {
+          status.textContent = `Email was not sent: ${error.message}`;
+          button.disabled = false;
+          logActivity("Payment plan email failed");
         }
       });
     });
   }
 
 
+  function currentStudentId() {
+    return encodeURIComponent(state.student?.key || state.studentId || "12345");
+  }
+
   function openSchedulePage() {
-    const id = encodeURIComponent(state.student?.key || state.studentId || "12345");
-    window.location.href = `schedule-script.html?StudentId=${id}`;
+    window.location.href = `schedule-script.html?StudentId=${currentStudentId()}`;
+  }
+
+  function openFinancialPage() {
+    window.location.href = `financial-script.html?StudentId=${currentStudentId()}`;
+  }
+
+  function updatePageLinks() {
+    const id = currentStudentId();
+    const backLink = document.querySelector("#backToProfile");
+    if (backLink) backLink.href = `agent-script.html?StudentId=${id}`;
   }
 
   function handleAction(action) {
@@ -469,6 +534,9 @@
         break;
       case "scheduleAdvisor":
         openSchedulePage();
+        break;
+      case "openFinancial":
+        openFinancialPage();
         break;
       case "transferTier2":
         showTransferTier2();
@@ -530,6 +598,7 @@
     }
 
     bindStudent(state.student);
+    updatePageLinks();
     logActivity("Profile loaded");
 
     const params = new URLSearchParams(window.location.search);

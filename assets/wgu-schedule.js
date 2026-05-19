@@ -59,8 +59,7 @@
     const values = {
       ...student,
       advisor_name: advisorName(student),
-      callback_display: callbackDisplay(student),
-      preferred_follow_up_window: student.preferred_follow_up_window || "Next available"
+      callback_display: callbackDisplay(student)
     };
 
     $$('[data-bind]').forEach((el) => {

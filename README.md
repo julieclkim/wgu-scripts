@@ -1,21 +1,23 @@
 # WGU Student Support - Minimal Agent Panel
 
-This package contains a stripped-down Genesys Cloud web script for a WGU student support demo.
+This package contains a minimal WGU student support web script for a live advisor demo.
 
 ## Pages
 
-- `agent-script.html` - Main embedded student profile and financial support page
-- `schedule-script.html` - Separate advisor scheduling page, not shown as a tab in the main script
+- `agent-script.html` - Main student snapshot page
+- `financial-script.html` - Separate financial details page
+- `schedule-script.html` - Separate advisor scheduling page
 - `data/students.json` - Demo student records
-- `assets/wgu-finance-minimal.css` - Main script styling
-- `assets/wgu-finance-minimal.js` - Main script data lookup, tabs, popups, and Data Action payload builder
+- `assets/wgu-finance-minimal.css` - Main and financial page styling
+- `assets/wgu-finance-minimal.js` - Student lookup, financial actions, popups, and payment-plan email
 - `assets/wgu-schedule.css` - Scheduling page styling
-- `assets/wgu-schedule.js` - Scheduling page data lookup, advisor availability, and demo appointment confirmation
+- `assets/wgu-schedule.js` - Scheduling page lookup, advisor availability, and demo appointment confirmation
 
 ## Test URLs
 
 ```text
 https://YOUR-GITHUB-USERNAME.github.io/YOUR-REPO/agent-script.html?StudentId=12345
+https://YOUR-GITHUB-USERNAME.github.io/YOUR-REPO/financial-script.html?StudentId=12345
 https://YOUR-GITHUB-USERNAME.github.io/YOUR-REPO/schedule-script.html?StudentId=12345
 ```
 
@@ -23,77 +25,84 @@ For Julie's repo:
 
 ```text
 https://julieclkim.github.io/wgu-scripts/agent-script.html?StudentId=12345
+https://julieclkim.github.io/wgu-scripts/financial-script.html?StudentId=12345
 https://julieclkim.github.io/wgu-scripts/schedule-script.html?StudentId=12345
 ```
 
-## Genesys Web Page URLs
+## Web Page URLs for Genesys
 
 Main student profile script:
 
 ```text
-https://julieclkim.github.io/wgu-scripts/agent-script.html?StudentId=<insert Genesys StudentId variable>
+https://julieclkim.github.io/wgu-scripts/agent-script.html?StudentId=<insert StudentId variable>
+```
+
+Financial details script:
+
+```text
+https://julieclkim.github.io/wgu-scripts/financial-script.html?StudentId=<insert StudentId variable>
 ```
 
 Advisor scheduling script:
 
 ```text
-https://julieclkim.github.io/wgu-scripts/schedule-script.html?StudentId=<insert Genesys StudentId variable>
+https://julieclkim.github.io/wgu-scripts/schedule-script.html?StudentId=<insert StudentId variable>
 ```
 
-Use the Genesys variable picker. Do not type curly braces manually.
+Use the variable picker in the script editor. Do not type curly braces manually.
 
-## Main script tabs
+## Main student page
 
-- Student: compact student snapshot and contact context
-- Financial: essential balance, aid, due date, and eligible payment plan summary
+The main page only shows essential student context:
 
-## Main script quick actions
+- Student ID
+- Status
+- Program
+- Mentor
+- Phone
+- Email
+- Contact reason
+- Course focus
+- Student note
 
-- Send Payment Plan Link
-- Open Student Account
-- Create Financial Services Follow-Up
-- Schedule Advisor Call
+## Financial page
+
+The financial page contains the financial details and actions:
+
+- Balance
+- Aid status
+- Expected aid date
+- Due date
+- Eligible payment plan
+- Aid award summary
+- Send payment plan link
+- Open student account
+- Create Financial Services follow-up
 - Transfer to Tier II / Specialist
 
 ## Scheduling page
 
-The scheduling page is intentionally separate from the tabs. It loads the same `StudentId`, pulls the assigned advisor from `data/students.json`, shows dummy advisor availability, and pre-fills appointment notes so the agent does not need to type during the demo.
+The scheduling page is intentionally separate from the main student page. It loads the same `StudentId`, pulls the assigned advisor from `data/students.json`, shows dummy advisor availability, and pre-fills appointment notes so the agent does not need to type during the demo.
 
-When the agent clicks `Schedule appointment`, the page displays a demo confirmation and emits this event to the parent iframe:
+When the agent clicks `Schedule appointment`, the page displays a demo confirmation. It does not create a real calendar event.
 
-```text
-WGU_SCHEDULE_ADVISOR_CALL
-```
+## Payment plan email
 
-This does not create a real calendar event. It is demo-only.
+The `Send Payment Plan Link` action sends the payment plan details to the student's email address from `data/students.json`.
 
-## Payment plan link Data Action
-
-The `Send Payment Plan Link` button builds the input payload for this Genesys Cloud Data Action:
+For the demo student Roy Williams, that email is:
 
 ```text
-julie - Send Agentless Email v3
+julie.genesys.test@gmail.com
 ```
 
-Expected input contract:
+The page uses FormSubmit as a lightweight browser-based email endpoint. First-time use for the recipient address may trigger an activation email. Confirm that activation email once, then retry the send button.
 
-```json
-{
-  "fromAddress_email": "info@mail.gcgovsc12.org",
-  "fromAddress_name": "WGU Student Financial Services",
-  "toAddress_email": "student email",
-  "toAddress_name": "student name",
-  "replyToAddress_email": "julie-uni@genesyssc12.mypurecloud.com",
-  "replyToAddress_name": "WGU Student Financial Services",
-  "subject": "email subject",
-  "htmlBody": "full branded HTML email"
-}
-```
-
-The page dispatches this browser event and also sends it to the parent iframe frame:
+The sender values used in the email content are:
 
 ```text
-WGU_SEND_PAYMENT_PLAN_EMAIL
+From: info@mail.gcgovsc12.org
+Reply-to: julie-uni@genesyssc12.mypurecloud.com
 ```
 
-The page cannot authenticate to Genesys Cloud by itself from GitHub Pages. To send a real email, connect this event to a Genesys-side action bridge, a native Genesys Script Data Action step, or a middleware endpoint that calls the Data Action.
+Important: FormSubmit controls the actual mail transport envelope. Those sender details are included in the submitted email content and reply-to metadata, but the message may still appear as delivered by FormSubmit or its mail service.

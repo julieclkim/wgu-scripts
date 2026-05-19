@@ -17,10 +17,22 @@ Output: No
 
 ## 3. Add Web Page component
 
-Use this URL:
+Main student profile URL:
 
 ```text
 https://julieclkim.github.io/wgu-scripts/agent-script.html?StudentId=<insert Genesys StudentId variable>
+```
+
+Financial details URL:
+
+```text
+https://julieclkim.github.io/wgu-scripts/financial-script.html?StudentId=<insert Genesys StudentId variable>
+```
+
+Scheduling URL:
+
+```text
+https://julieclkim.github.io/wgu-scripts/schedule-script.html?StudentId=<insert Genesys StudentId variable>
 ```
 
 ## 4. Publish script and enable inbound

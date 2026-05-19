@@ -36,7 +36,7 @@ This page does not create a real calendar event. It is designed to show the agen
 {
   "eventType": "WGU_SCHEDULE_ADVISOR_CALL",
   "studentId": "12345",
-  "studentName": "Rory Williams",
+  "studentName": "Roy Williams",
   "advisorName": "Carla Espinosa",
   "appointment": {
     "topic": "Advisor follow-up",

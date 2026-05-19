@@ -574,7 +574,7 @@ h1 {
   background: #f2f6fa;
 }
 
-.payload-code {
+.message-code {
   width: 100%;
   min-height: 130px;
   resize: vertical;
@@ -634,3 +634,24 @@ h1 {
 /* Fix: ensure hidden overlays stay hidden even when custom CSS sets display:grid. */
 [hidden] { display: none !important; }
 .modal-backdrop[hidden] { display: none !important; }
+
+[hidden],
+.modal-backdrop[hidden] {
+  display: none !important;
+}
+
+.header-link {
+  align-self: flex-start;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.full-width-plan {
+  margin: 12px 0;
+}
+
+.compact-kv {
+  max-width: 720px;
+}

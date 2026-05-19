@@ -23,13 +23,8 @@
 
     <div id="setupWarning" class="setup-warning" hidden></div>
 
-    <nav class="tabs" aria-label="Student support tabs">
-      <button class="tab is-active" type="button" data-tab-target="snapshot">Student</button>
-      <button class="tab" type="button" data-tab-target="financial">Financial</button>
-    </nav>
-
     <main class="workspace">
-      <section class="content-card tab-panel is-active" id="snapshot" aria-labelledby="student-tab">
+      <section class="content-card" id="snapshot">
         <div class="section-head">
           <h2>Student snapshot</h2>
           <span class="status-chip" data-bind="risk_flag">Risk</span>
@@ -41,12 +36,12 @@
             <strong data-bind="key">-</strong>
           </div>
           <div class="field">
-            <span>Program</span>
-            <strong data-bind="program">-</strong>
-          </div>
-          <div class="field">
             <span>Status</span>
             <strong data-bind="enrollment_status">-</strong>
+          </div>
+          <div class="field">
+            <span>Program</span>
+            <strong data-bind="program">-</strong>
           </div>
           <div class="field">
             <span>Mentor</span>
@@ -64,11 +59,11 @@
 
         <div class="two-column tight">
           <article class="mini-card">
-            <h3>Reason</h3>
+            <h3>Contact reason</h3>
             <p data-bind="contactReason">Financial hold may prevent registration.</p>
           </article>
           <article class="mini-card">
-            <h3>Current course focus</h3>
+            <h3>Course focus</h3>
             <p data-bind="current_course_focus">-</p>
           </article>
         </div>
@@ -79,59 +74,14 @@
         </article>
       </section>
 
-      <section class="content-card tab-panel" id="financial" aria-labelledby="financial-tab" hidden>
-        <div class="section-head">
-          <h2>Financial overview</h2>
-          <span class="status-chip amber" data-bind="account_hold_display">Hold</span>
-        </div>
-
-        <div class="finance-strip">
-          <div>
-            <span>Balance</span>
-            <strong data-bind="balance_due">-</strong>
-          </div>
-          <div>
-            <span>Aid status</span>
-            <strong data-bind="financial_aid_status">-</strong>
-          </div>
-          <div>
-            <span>Expected aid</span>
-            <strong data-bind="aid_disbursement_date">-</strong>
-          </div>
-          <div>
-            <span>Due date</span>
-            <strong data-bind="payment_due_date">-</strong>
-          </div>
-        </div>
-
-        <div class="two-column">
-          <button class="plan-card" type="button" data-action="viewPlans">
-            <span>Eligible payment plan</span>
-            <strong data-bind="payment_plan_available_display">Available</strong>
-            <small>View 3-payment and 4-payment breakdowns</small>
-          </button>
-
-          <article class="mini-card">
-            <h3>Aid awards</h3>
-            <dl class="kv-list">
-              <div><dt>Approved</dt><dd data-bind="approved_aid_amount">-</dd></div>
-              <div><dt>Grant</dt><dd data-bind="grant_amount">-</dd></div>
-              <div><dt>Loan</dt><dd data-bind="loan_amount">-</dd></div>
-            </dl>
-          </article>
-        </div>
-      </section>
-
       <aside class="side-card" aria-label="Actions and activity">
         <div class="section-head small">
           <h2>Actions</h2>
         </div>
         <div class="action-list">
-          <button type="button" data-action="sendPlanEmail">Send Payment Plan Link</button>
-          <button type="button" data-action="openAccount">Open Student Account</button>
-          <button type="button" data-action="createSfs">Create Financial Services Follow-Up</button>
-          <button type="button" data-action="scheduleAdvisor">Schedule Advisor Call</button>
-          <button type="button" data-action="transferTier2">Transfer to Tier II / Specialist</button>
+          <button type="button" data-action="openFinancial">Financial details</button>
+          <button type="button" data-action="scheduleAdvisor">Schedule advisor call</button>
+          <button type="button" data-action="openAccount">Student account</button>
         </div>
 
         <div class="activity-box">

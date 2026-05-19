@@ -201,3 +201,7 @@ dd { margin: 0; font-weight: 850; word-break: break-word; }
   .back-link { margin-top: 12px; }
   .card { border-radius: 14px; padding: 14px; }
 }
+
+[hidden] {
+  display: none !important;
+}

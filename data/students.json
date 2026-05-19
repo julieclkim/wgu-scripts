@@ -1,7 +1,7 @@
 {
   "12345": {
     "key": "12345",
-    "full_name": "Rory Williams",
+    "full_name": "Roy Williams",
     "program": "Nursing (RN to BSN)",
     "student_type": "Active",
     "phone_number": "+16054311804",
@@ -42,7 +42,6 @@
     "payment_due_date": "May 22, 2026",
     "payment_reference_id": "WGU-12345",
     "callback_number": "+16054311804",
-    "preferred_follow_up_window": "Monday afternoon",
     "payment_plan_email_sent": "Yes"
   },
   "941115": {
