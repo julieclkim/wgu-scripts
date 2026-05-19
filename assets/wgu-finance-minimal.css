@@ -630,3 +630,7 @@ h1 {
     overflow-x: auto;
   }
 }
+
+/* Fix: ensure hidden overlays stay hidden even when custom CSS sets display:grid. */
+[hidden] { display: none !important; }
+.modal-backdrop[hidden] { display: none !important; }
