@@ -1,14 +1,13 @@
-# Payment Plan Email Demo Behavior
+# Demo email behavior
 
-The `Send Payment Plan Link` button is demo-only in this version.
+The Financial page uses a demo-only email action.
 
-When the advisor clicks the button, the page:
+When an agent clicks **Send Payment Plan Link** and then **Send email**, the page:
 
-1. Shows a preview of the payment plan email.
-2. Lets the advisor click `Send email`.
-3. Marks the email as sent in the on-screen demo status.
-4. Adds `Payment plan email sent` to the activity log.
+- Shows the payment plan email preview
+- Marks the email as sent
+- Adds `Payment plan email sent` to the activity log
+- Does not send a real email
+- Does not require any external setup
 
-No live delivery is used. This is a visual demo action only.
-
-The student email displayed in the script is still pulled from `data/students.json` so the experience looks realistic during the demo.
+This keeps the demo reliable in front of an audience.

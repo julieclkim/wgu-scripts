@@ -88,14 +88,21 @@ When the agent clicks `Schedule appointment`, the page displays a demo confirmat
 
 ## Payment plan email
 
-The `Send Payment Plan Link` action is demo-only in this version.
+The `Send Payment Plan Link` action sends the payment plan details to the student's email address from `data/students.json`.
 
-It opens a preview of the payment plan email, lets the advisor click `Send email`, marks the email as sent on screen, and adds the action to the activity log.
-
-No live delivery is used. This is a visual demo action only.
-
-For the demo student Roy Williams, the displayed recipient email is pulled from `data/students.json`:
+For the demo student Roy Williams, that email is:
 
 ```text
 julie.genesys.test@gmail.com
 ```
+
+The payment plan email action is demo-only. It shows the email preview, marks the message as sent, and adds the action to the activity log. It does not call a live email service.
+
+The sender values used in the email content are:
+
+```text
+From: info@mail.gcgovsc12.org
+Reply-to: julie-uni@genesyssc12.mypurecloud.com
+```
+
+The sender and reply-to values remain in the demo preview for realism, but no live message is sent.

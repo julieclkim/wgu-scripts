@@ -1,4 +1,11 @@
 (() => {
+  const EMAIL_CONFIG = {
+    fromAddress_email: "info@mail.gcgovsc12.org",
+    fromAddress_name: "WGU Student Financial Services",
+    replyToAddress_email: "julie-uni@genesyssc12.mypurecloud.com",
+    replyToAddress_name: "WGU Student Financial Services"
+  };
+
   const state = {
     students: {},
     student: null,
@@ -247,16 +254,42 @@
       `Student portal: ${s.payment_portal_url || "https://my.wgu.edu/"}`
     ].join("\n");
 
+    const formSubmitPayload = {
+      name: EMAIL_CONFIG.fromAddress_name,
+      email: EMAIL_CONFIG.replyToAddress_email,
+      _replyto: EMAIL_CONFIG.replyToAddress_email,
+      _subject: subject,
+      _template: "table",
+      _captcha: "false",
+      "Student name": s.full_name,
+      "Student ID": s.key,
+      "Program": s.program,
+      "Current balance": s.balance_due,
+      "Financial aid status": s.financial_aid_status,
+      "Expected aid date": s.aid_disbursement_date,
+      "Payment reference": s.payment_reference_id || s.key,
+      "3-payment option": plan3.map((row) => `Payment ${row.payment}: ${row.amount} due ${row.dueDate}`).join(" | "),
+      "4-payment option": plan4.map((row) => `Payment ${row.payment}: ${row.amount} due ${row.dueDate}`).join(" | "),
+      "Advisor note": "Payment plan options shared for student review. Final eligibility and dates are confirmed in the student portal.",
+      message: messageText
+    };
+
     return {
-      eventType: "WGU_PAYMENT_PLAN_EMAIL_DEMO",
-      demoOnly: true,
+      eventType: "WGU_PAYMENT_PLAN_EMAIL",
+      provider: "Demo email",
+      endpoint: "demo-only",
       inputs: {
+        fromAddress_email: EMAIL_CONFIG.fromAddress_email,
+        fromAddress_name: EMAIL_CONFIG.fromAddress_name,
         toAddress_email: s.email,
         toAddress_name: s.full_name,
+        replyToAddress_email: EMAIL_CONFIG.replyToAddress_email,
+        replyToAddress_name: EMAIL_CONFIG.replyToAddress_name,
         subject,
         htmlBody,
         messageText
       },
+      formSubmitPayload,
       student: {
         key: s.key,
         full_name: s.full_name,
@@ -392,10 +425,15 @@
     });
   }
 
-  function completePaymentPlanEmail(request) {
+  async function sendPaymentPlanEmail(request) {
     state.lastEmailRequest = request;
-    window.dispatchEvent(new CustomEvent("wgu:paymentPlanEmailDemoCompleted", { detail: request }));
-    return { status: "completed", demoOnly: true };
+    window.dispatchEvent(new CustomEvent("wgu:paymentPlanEmailSent", { detail: request }));
+
+    return {
+      status: "success",
+      demoOnly: true,
+      message: "Payment plan email marked as sent for this demo."
+    };
   }
 
   function showSendPlanEmail() {
@@ -426,14 +464,15 @@
     `;
 
     openModal(html, (root) => {
-      $("#sendEmailActionButton", root).addEventListener("click", () => {
+      $("#sendEmailActionButton", root).addEventListener("click", async () => {
         const status = $("#sendEmailStatus", root);
         const button = $("#sendEmailActionButton", root);
         status.hidden = false;
-        completePaymentPlanEmail(request);
-        status.textContent = "Payment plan email marked as sent for this demo.";
-        button.textContent = "Email sent";
+        status.textContent = "Sending payment plan email...";
         button.disabled = true;
+        await sendPaymentPlanEmail(request);
+        status.textContent = "Success. Payment plan email sent.";
+        button.textContent = "Sent";
         logActivity("Payment plan email sent");
       });
     });
