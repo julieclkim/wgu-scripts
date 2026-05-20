@@ -88,21 +88,14 @@ When the agent clicks `Schedule appointment`, the page displays a demo confirmat
 
 ## Payment plan email
 
-The `Send Payment Plan Link` action sends the payment plan details to the student's email address from `data/students.json`.
+The `Send Payment Plan Link` action is demo-only in this version.
 
-For the demo student Roy Williams, that email is:
+It opens a preview of the payment plan email, lets the advisor click `Send email`, marks the email as sent on screen, and adds the action to the activity log.
+
+No live delivery is used. This is a visual demo action only.
+
+For the demo student Roy Williams, the displayed recipient email is pulled from `data/students.json`:
 
 ```text
 julie.genesys.test@gmail.com
 ```
-
-The page uses FormSubmit as a lightweight browser-based email endpoint. First-time use for the recipient address may trigger an activation email. Confirm that activation email once, then retry the send button.
-
-The sender values used in the email content are:
-
-```text
-From: info@mail.gcgovsc12.org
-Reply-to: julie-uni@genesyssc12.mypurecloud.com
-```
-
-Important: FormSubmit controls the actual mail transport envelope. Those sender details are included in the submitted email content and reply-to metadata, but the message may still appear as delivered by FormSubmit or its mail service.

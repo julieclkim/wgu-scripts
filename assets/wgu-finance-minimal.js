@@ -1,11 +1,4 @@
 (() => {
-  const EMAIL_CONFIG = {
-    fromAddress_email: "info@mail.gcgovsc12.org",
-    fromAddress_name: "WGU Student Financial Services",
-    replyToAddress_email: "julie-uni@genesyssc12.mypurecloud.com",
-    replyToAddress_name: "WGU Student Financial Services"
-  };
-
   const state = {
     students: {},
     student: null,
@@ -254,42 +247,16 @@
       `Student portal: ${s.payment_portal_url || "https://my.wgu.edu/"}`
     ].join("\n");
 
-    const formSubmitPayload = {
-      name: EMAIL_CONFIG.fromAddress_name,
-      email: EMAIL_CONFIG.replyToAddress_email,
-      _replyto: EMAIL_CONFIG.replyToAddress_email,
-      _subject: subject,
-      _template: "table",
-      _captcha: "false",
-      "Student name": s.full_name,
-      "Student ID": s.key,
-      "Program": s.program,
-      "Current balance": s.balance_due,
-      "Financial aid status": s.financial_aid_status,
-      "Expected aid date": s.aid_disbursement_date,
-      "Payment reference": s.payment_reference_id || s.key,
-      "3-payment option": plan3.map((row) => `Payment ${row.payment}: ${row.amount} due ${row.dueDate}`).join(" | "),
-      "4-payment option": plan4.map((row) => `Payment ${row.payment}: ${row.amount} due ${row.dueDate}`).join(" | "),
-      "Advisor note": "Payment plan options shared for student review. Final eligibility and dates are confirmed in the student portal.",
-      message: messageText
-    };
-
     return {
-      eventType: "WGU_PAYMENT_PLAN_EMAIL",
-      provider: "FormSubmit",
-      endpoint: `https://formsubmit.co/ajax/${encodeURIComponent(s.email)}`,
+      eventType: "WGU_PAYMENT_PLAN_EMAIL_DEMO",
+      demoOnly: true,
       inputs: {
-        fromAddress_email: EMAIL_CONFIG.fromAddress_email,
-        fromAddress_name: EMAIL_CONFIG.fromAddress_name,
         toAddress_email: s.email,
         toAddress_name: s.full_name,
-        replyToAddress_email: EMAIL_CONFIG.replyToAddress_email,
-        replyToAddress_name: EMAIL_CONFIG.replyToAddress_name,
         subject,
         htmlBody,
         messageText
       },
-      formSubmitPayload,
       student: {
         key: s.key,
         full_name: s.full_name,
@@ -425,31 +392,10 @@
     });
   }
 
-  async function sendPaymentPlanEmail(request) {
+  function completePaymentPlanEmail(request) {
     state.lastEmailRequest = request;
-    window.dispatchEvent(new CustomEvent("wgu:paymentPlanEmailRequested", { detail: request }));
-
-    const response = await fetch(request.endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      },
-      body: JSON.stringify(request.formSubmitPayload)
-    });
-
-    let body = {};
-    try {
-      body = await response.json();
-    } catch (_) {
-      body = {};
-    }
-
-    if (!response.ok) {
-      throw new Error(body.message || body.error || "Email service returned an error.");
-    }
-
-    return body;
+    window.dispatchEvent(new CustomEvent("wgu:paymentPlanEmailDemoCompleted", { detail: request }));
+    return { status: "completed", demoOnly: true };
   }
 
   function showSendPlanEmail() {
@@ -480,21 +426,15 @@
     `;
 
     openModal(html, (root) => {
-      $("#sendEmailActionButton", root).addEventListener("click", async () => {
+      $("#sendEmailActionButton", root).addEventListener("click", () => {
         const status = $("#sendEmailStatus", root);
         const button = $("#sendEmailActionButton", root);
         status.hidden = false;
-        status.textContent = "Sending payment plan email...";
+        completePaymentPlanEmail(request);
+        status.textContent = "Payment plan email marked as sent for this demo.";
+        button.textContent = "Email sent";
         button.disabled = true;
-        try {
-          await sendPaymentPlanEmail(request);
-          status.textContent = "Email request sent. Check the student inbox. First-time use may require confirming an activation email before delivery completes.";
-          logActivity("Payment plan email sent");
-        } catch (error) {
-          status.textContent = `Email was not sent: ${error.message}`;
-          button.disabled = false;
-          logActivity("Payment plan email failed");
-        }
+        logActivity("Payment plan email sent");
       });
     });
   }
