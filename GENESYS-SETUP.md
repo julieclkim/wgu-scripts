@@ -1,54 +1,21 @@
-# Genesys Cloud Setup
+# Genesys setup checklist
 
-## 1. Host files on GitHub Pages
-
-Upload the contents of this folder to the root of the GitHub repo and enable Pages from `main` and `/root`.
-
-## 2. Create script variable
-
-Create a Genesys Cloud Script input variable:
+1. Host these files in a GitHub Pages repo.
+2. Create a Genesys Cloud Script.
+3. Add a string input variable named `ApplicantId`.
+4. Add a Web Page component.
+5. Set the Web Page Source to:
 
 ```text
-Name: StudentId
-Type: String
-Input: Yes
-Output: No
+https://YOUR-GITHUB-USERNAME.github.io/YOUR-REPO/agent-script.html?ApplicantId=<insert ApplicantId variable>
 ```
 
-## 3. Add Web Page component
+6. Enable Inbound on the script.
+7. Publish the script.
+8. In Architect, use Set Screen Pop before Transfer to ACD and map the collected applicant email or ID into `ApplicantId`.
 
-Main student profile URL:
-
-```text
-https://julieclkim.github.io/wgu-scripts/agent-script.html?StudentId=<insert Genesys StudentId variable>
-```
-
-Financial details URL:
+For a hardcoded test, use:
 
 ```text
-https://julieclkim.github.io/wgu-scripts/financial-script.html?StudentId=<insert Genesys StudentId variable>
-```
-
-Scheduling URL:
-
-```text
-https://julieclkim.github.io/wgu-scripts/schedule-script.html?StudentId=<insert Genesys StudentId variable>
-```
-
-## 4. Publish script and enable inbound
-
-Make sure the script is published and inbound-enabled before selecting it in Architect.
-
-## 5. Architect mapping
-
-In Set Screen Pop, map the collected virtual agent student ID to the script input variable:
-
-```text
-StudentId = Flow.StudentId
-```
-
-For a hardcoded test:
-
-```text
-StudentId = "12345"
+ApplicantId = "maya.chen@example.com"
 ```

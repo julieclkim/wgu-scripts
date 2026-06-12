@@ -3,102 +3,100 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>WGU Student Support</title>
-  <link rel="stylesheet" href="assets/wgu-finance-minimal.css" />
+  <title>WGU Applicant Support</title>
+  <link rel="stylesheet" href="assets/applicant-support.css" />
 </head>
 <body>
-  <div id="app" class="app-shell">
+  <main class="shell" id="app" data-state="loading">
     <header class="topbar">
       <div>
-        <div class="eyebrow">WGU Student Support</div>
-        <div class="student-heading">
-          <h1 data-bind="full_name">Loading student...</h1>
-          <span class="pill verified">Verified</span>
-          <span class="pill" data-bind="student_type">Active</span>
-        </div>
-        <p class="subline"><span data-bind="key">-</span> · <span data-bind="program">-</span></p>
+        <div class="eyebrow">WGU Enrollment Support</div>
+        <h1 id="applicantName">Applicant</h1>
       </div>
-      <div class="interaction">Voice interaction | Live advisor</div>
+      <div class="top-meta">
+        <span id="verifiedBadge" class="pill good">Verified transfer</span>
+        <span id="stagePill" class="pill">Application review</span>
+      </div>
     </header>
 
-    <div id="setupWarning" class="setup-warning" hidden></div>
+    <section id="missing" class="alert" hidden>
+      Applicant not found. Check the URL and use <code>?ApplicantId=maya.chen@example.com</code> or another key from <code>data/applicants.json</code>.
+    </section>
 
-    <main class="workspace">
-      <section class="content-card" id="snapshot">
-        <div class="section-head">
-          <h2>Student snapshot</h2>
-          <span class="status-chip" data-bind="risk_flag">Risk</span>
+    <section class="grid">
+      <article class="card span-2">
+        <div class="card-head">
+          <h2>Applicant snapshot</h2>
+          <span id="priority" class="priority">Priority</span>
         </div>
+        <div class="snapshot">
+          <div><span>Applicant ID</span><strong id="applicantId">--</strong></div>
+          <div><span>Program</span><strong id="program">--</strong></div>
+          <div><span>Degree</span><strong id="degree">--</strong></div>
+          <div><span>Target start</span><strong id="targetStart">--</strong></div>
+          <div><span>State</span><strong id="state">--</strong></div>
+          <div><span>Status</span><strong id="status">--</strong></div>
+        </div>
+      </article>
 
-        <div class="summary-grid compact">
-          <div class="field">
-            <span>Student ID</span>
-            <strong data-bind="key">-</strong>
+      <article class="card">
+        <h2>Contact</h2>
+        <div class="field"><span>Email</span><strong id="email">--</strong></div>
+        <div class="field"><span>Phone</span><strong id="phone">--</strong></div>
+        <div class="field"><span>Last activity</span><strong id="lastActivity">--</strong></div>
+      </article>
+
+      <article class="card span-2 issue-card">
+        <h2>Application issue</h2>
+        <div class="issue-type" id="issueType">--</div>
+        <p id="reportedIssue">--</p>
+        <div class="next-step"><span>Needed now</span><strong id="requestedFix">--</strong></div>
+      </article>
+
+      <article class="card">
+        <h2>Checklist</h2>
+        <div class="field"><span>Progress</span><strong id="progress">--</strong></div>
+        <div class="bar"><span id="progressBar"></span></div>
+        <div class="field"><span>Transcripts</span><strong id="transcripts">--</strong></div>
+        <div class="field"><span>FAFSA</span><strong id="fafsa">--</strong></div>
+      </article>
+
+      <article class="card span-2">
+        <h2>Application details</h2>
+        <div class="two-col">
+          <div>
+            <h3>Completed</h3>
+            <ul id="completedList" class="compact-list"></ul>
           </div>
-          <div class="field">
-            <span>Status</span>
-            <strong data-bind="enrollment_status">-</strong>
-          </div>
-          <div class="field">
-            <span>Program</span>
-            <strong data-bind="program">-</strong>
-          </div>
-          <div class="field">
-            <span>Mentor</span>
-            <strong data-bind="mentorName">-</strong>
-          </div>
-          <div class="field">
-            <span>Phone</span>
-            <strong data-bind="phone_number">-</strong>
-          </div>
-          <div class="field">
-            <span>Email</span>
-            <strong data-bind="email">-</strong>
+          <div>
+            <h3>Missing or pending</h3>
+            <ul id="missingList" class="compact-list warn"></ul>
           </div>
         </div>
+      </article>
 
-        <div class="two-column tight">
-          <article class="mini-card">
-            <h3>Contact reason</h3>
-            <p data-bind="contactReason">Financial hold may prevent registration.</p>
-          </article>
-          <article class="mini-card">
-            <h3>Course focus</h3>
-            <p data-bind="current_course_focus">-</p>
-          </article>
-        </div>
-
-        <article class="mini-card note-card">
-          <h3>Student note</h3>
-          <p data-bind="student_notes">-</p>
-        </article>
-      </section>
-
-      <aside class="side-card" aria-label="Actions and activity">
-        <div class="section-head small">
-          <h2>Actions</h2>
-        </div>
-        <div class="action-list">
-          <button type="button" data-action="openFinancial">Financial details</button>
-          <button type="button" data-action="scheduleAdvisor">Schedule advisor call</button>
-          <button type="button" data-action="openAccount">Student account</button>
-        </div>
-
-        <div class="activity-box">
+      <aside class="card tools">
+        <h2>Quick actions</h2>
+        <button data-action="record">Open applicant record</button>
+        <button data-action="correct">Correct application detail</button>
+        <button data-action="note">Add enrollment note</button>
+        <button data-action="instructions">Send next-step instructions</button>
+        <button data-action="callback">Schedule counselor follow-up</button>
+        <div class="log-wrap">
           <h3>Activity</h3>
           <ol id="activityLog"></ol>
         </div>
       </aside>
-    </main>
-  </div>
-
-  <div class="modal-backdrop" id="modalBackdrop" hidden>
-    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <button class="modal-close" type="button" aria-label="Close" data-close-modal>×</button>
-      <div id="modalContent"></div>
     </section>
+  </main>
+
+  <div class="modal" id="modal" hidden>
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="x" id="closeModal" aria-label="Close">×</button>
+      <div id="modalContent"></div>
+    </div>
   </div>
 
-  <script src="assets/wgu-finance-minimal.js"></script>
+  <script src="assets/applicant-support.js"></script>
 </body>
 </html>
