@@ -15,7 +15,13 @@ function stableOffset(seed, min, max){
   for (let i = 0; i < text.length; i++) total += text.charCodeAt(i);
   return min + (total % (max - min + 1));
 }
-function dynamicTargetStart(a){ return formatDate(addMonths(new Date(), 1)); }
+function dynamicTargetStart(a){
+  // WGU start dates in this demo are month-start dates. Use the first day
+  // of the next month that is at least 30 days away so the page stays current.
+  const today = new Date();
+  const threshold = addDays(today, 30);
+  return formatDate(new Date(threshold.getFullYear(), threshold.getMonth() + 1, 1));
+}
 function dynamicRecentActivity(a){ return formatDate(addDays(new Date(), -stableOffset(a.key || a.email || a.full_name, 1, 3))); }
 function addLog(text) { const li=document.createElement("li"); li.textContent=`${now()} ${text}`; $("activityLog").prepend(li); }
 function firstName(name){ return val(name,"Applicant").split(" ")[0]; }
@@ -78,16 +84,16 @@ function openAction(type){
   }
   if(type==="correct"){
     openModal(`<h2>Correct application detail</h2>
-      <div class="form-row"><label>Correction type<select id="correctionType" onchange="handleCorrectionChange(this.value)"><option value="">Select correction type</option><option value="name">Name correction</option><option value="program">Program selection</option><option value="school">Prior school or transcript source</option><option value="contact">Contact information</option></select></label></div>
+      <div class="form-row"><label>Correction type<select id="correctionType" onchange="handleCorrectionChange(this.value)"><option value="">Select correction type</option><option value="name">Correct name</option><option value="program">Program selection</option><option value="school">Prior school or transcript source</option><option value="contact">Contact information</option></select></label></div>
       <section id="nameCorrectionPanel" class="success-panel" hidden>
-        <h3>Name correction</h3>
+        <h3>Correct name</h3>
         <p>Applicant accidentally used maiden name on the application and needs to update to the new legal last name.</p>
         <div class="form-row"><label>Current application name<input value="${val(a.maiden_name || a.full_name)}" /></label></div>
         <div class="form-row"><label>Corrected legal name<input value="${val(a.corrected_legal_name || a.full_name)}" /></label></div>
         <div class="form-row"><label>Internal note<textarea>Applicant reported using maiden name on the application. Confirmed correction request to update to new legal last name before enrollment file review continues.</textarea></label></div>
       </section>
       <section id="otherCorrectionPanel" class="hint-panel" hidden>
-        Select Name correction for this demo scenario.
+        Select Correct name for this demo scenario.
       </section>
       <div id="correctionSuccess" class="done-banner" hidden>Done. Application correction submitted.</div>
       <div class="modal-actions"><button class="secondary" onclick="closeModal()">Cancel</button><button class="primary" onclick="submitCorrection()">Submit correction</button></div>`);
@@ -130,6 +136,6 @@ function submitCorrection(){
   }
   const banner = $("correctionSuccess");
   if(banner) banner.hidden = false;
-  addLog("Name correction submitted");
+  addLog("Name corrected");
 }
 window.handleCorrectionChange=handleCorrectionChange; window.submitCorrection=submitCorrection;

@@ -51,4 +51,4 @@ All action buttons are dummy demo-only actions. They update the on-screen activi
 
 - The Application status card uses dynamic dates so target start is always about one month out and last activity appears recent.
 - Diana Kim shows `Transcripts from Austin Community College` as the immediate needed item.
-- Correct application detail only reveals the prefilled maiden-name correction form after selecting `Name correction`. Submitting it shows an on-screen success banner.
+- Correct application detail only reveals the prefilled maiden-correct name form after selecting `Correct name`. Submitting it shows an on-screen success banner.
