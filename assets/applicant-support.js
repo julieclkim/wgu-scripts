@@ -6,6 +6,17 @@ const applicantKey = ["ApplicantId","applicantId","applicant_id","key","email","
 function val(v, fallback="Not listed") { return v && String(v).trim() ? String(v).trim() : fallback; }
 function splitItems(text) { return val(text, "").split(";").map(x => x.trim()).filter(Boolean); }
 function now() { return new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"}); }
+function addDays(date, days){ const d = new Date(date); d.setDate(d.getDate() + days); return d; }
+function addMonths(date, months){ const d = new Date(date); d.setMonth(d.getMonth() + months); return d; }
+function formatDate(date){ return date.toLocaleDateString([], {month:"short", day:"numeric", year:"numeric"}); }
+function stableOffset(seed, min, max){
+  const text = String(seed || "applicant");
+  let total = 0;
+  for (let i = 0; i < text.length; i++) total += text.charCodeAt(i);
+  return min + (total % (max - min + 1));
+}
+function dynamicTargetStart(a){ return formatDate(addMonths(new Date(), 1)); }
+function dynamicRecentActivity(a){ return formatDate(addDays(new Date(), -stableOffset(a.key || a.email || a.full_name, 1, 3))); }
 function addLog(text) { const li=document.createElement("li"); li.textContent=`${now()} ${text}`; $("activityLog").prepend(li); }
 function firstName(name){ return val(name,"Applicant").split(" ")[0]; }
 
@@ -28,12 +39,12 @@ function render(a){
   $("applicantId").textContent=val(a.applicant_id || a.key);
   $("program").textContent=val(a.intended_program);
   $("degree").textContent=val(a.degree_level);
-  $("targetStart").textContent=val(a.target_start_date);
+  $("targetStart").textContent=dynamicTargetStart(a);
   $("state").textContent=val(a.state);
   $("status").textContent=val(a.application_status);
   $("email").textContent=val(a.email || a.key);
   $("phone").textContent=val(a.phone_number);
-  $("lastActivity").textContent=val(a.last_activity_date);
+  $("lastActivity").textContent=dynamicRecentActivity(a);
   $("issueType").textContent=val(a.issue_type,"Application correction");
   $("reportedIssue").textContent=val(a.reported_issue,"Applicant needs help correcting application information before continuing.");
   $("requestedFix").textContent=val(a.requested_fix || a.next_best_step);
@@ -61,16 +72,25 @@ function openAction(type){
   const a=state.applicant;
   if(type==="record"){
     openModal(`<h2>Applicant record</h2><div class="modal-grid">
-      ${field("Name",a.full_name)}${field("Applicant ID",a.key)}${field("Program",a.intended_program)}${field("Stage",a.applicant_stage)}${field("Status",a.application_status)}${field("Target start",a.target_start_date)}${field("Last activity",a.last_activity_summary,"wide")}${field("Personalization",a.personalization_summary,"wide")}
+      ${field("Name",a.full_name)}${field("Applicant ID",a.key)}${field("Program",a.intended_program)}${field("Stage",a.applicant_stage)}${field("Status",a.application_status)}${field("Target start",dynamicTargetStart(a))}${field("Last activity",dynamicRecentActivity(a))}${field("Summary",a.last_activity_summary,"wide")}
     </div><div class="modal-actions"><button class="secondary" onclick="closeModal()">Close</button></div>`);
     addLog("Applicant record viewed");
   }
   if(type==="correct"){
     openModal(`<h2>Correct application detail</h2>
-      <div class="form-row"><label>Correction type<select id="correctionType"><option>${val(a.issue_type,"Application correction")}</option><option>Program selection</option><option>Prior school or transcript source</option><option>Target start date</option><option>Contact information</option></select></label></div>
-      <div class="form-row"><label>Current note<textarea>${val(a.reported_issue)}</textarea></label></div>
-      <div class="form-row"><label>Correction summary<textarea>${val(a.requested_fix || a.next_best_step)}</textarea></label></div>
-      <div class="modal-actions"><button class="secondary" onclick="closeModal()">Cancel</button><button class="primary" onclick="actionDone('Application correction submitted')">Submit correction</button></div>`);
+      <div class="form-row"><label>Correction type<select id="correctionType" onchange="handleCorrectionChange(this.value)"><option value="">Select correction type</option><option value="name">Name correction</option><option value="program">Program selection</option><option value="school">Prior school or transcript source</option><option value="contact">Contact information</option></select></label></div>
+      <section id="nameCorrectionPanel" class="success-panel" hidden>
+        <h3>Name correction</h3>
+        <p>Applicant accidentally used maiden name on the application and needs to update to the new legal last name.</p>
+        <div class="form-row"><label>Current application name<input value="${val(a.maiden_name || a.full_name)}" /></label></div>
+        <div class="form-row"><label>Corrected legal name<input value="${val(a.corrected_legal_name || a.full_name)}" /></label></div>
+        <div class="form-row"><label>Internal note<textarea>Applicant reported using maiden name on the application. Confirmed correction request to update to new legal last name before enrollment file review continues.</textarea></label></div>
+      </section>
+      <section id="otherCorrectionPanel" class="hint-panel" hidden>
+        Select Name correction for this demo scenario.
+      </section>
+      <div id="correctionSuccess" class="done-banner" hidden>Done. Application correction submitted.</div>
+      <div class="modal-actions"><button class="secondary" onclick="closeModal()">Cancel</button><button class="primary" onclick="submitCorrection()">Submit correction</button></div>`);
   }
   if(type==="note"){
     openModal(`<h2>Add enrollment note</h2>
@@ -94,3 +114,22 @@ function openAction(type){
 function field(label, value){ return `<div class="modal-field"><span>${label}</span><strong>${val(value)}</strong></div>`; }
 window.closeModal=closeModal; window.actionDone=actionDone;
 init();
+
+function handleCorrectionChange(value){
+  const namePanel = $("nameCorrectionPanel");
+  const otherPanel = $("otherCorrectionPanel");
+  if(!namePanel || !otherPanel) return;
+  namePanel.hidden = value !== "name";
+  otherPanel.hidden = !value || value === "name";
+}
+function submitCorrection(){
+  const selected = $("correctionType") ? $("correctionType").value : "";
+  if(selected !== "name"){
+    handleCorrectionChange(selected || "other");
+    return;
+  }
+  const banner = $("correctionSuccess");
+  if(banner) banner.hidden = false;
+  addLog("Name correction submitted");
+}
+window.handleCorrectionChange=handleCorrectionChange; window.submitCorrection=submitCorrection;
