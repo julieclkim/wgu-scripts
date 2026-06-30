@@ -72,7 +72,22 @@ function wire(){
 }
 function openModal(html){ $("modalContent").innerHTML=html; $("modal").hidden=false; }
 function closeModal(){ $("modal").hidden=true; $("modalContent").innerHTML=""; }
-function actionDone(text){ addLog(text); closeModal(); }
+function showToast(message){
+  let toast = $("toast");
+  if(!toast){
+    toast = document.createElement("div");
+    toast.id = "toast";
+    toast.className = "toast";
+    toast.setAttribute("role", "status");
+    toast.setAttribute("aria-live", "polite");
+    document.body.appendChild(toast);
+  }
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => toast.classList.remove("show"), 2600);
+}
+function actionDone(text){ addLog(text); closeModal(); showToast(`Done. ${text}.`); }
 
 function openAction(type){
   const a=state.applicant;
@@ -95,8 +110,7 @@ function openAction(type){
       <section id="otherCorrectionPanel" class="hint-panel" hidden>
         Select Correct name for this demo scenario.
       </section>
-      <div id="correctionSuccess" class="done-banner" hidden>Done. Application correction submitted.</div>
-      <div class="modal-actions"><button class="secondary" onclick="closeModal()">Cancel</button><button class="primary" onclick="submitCorrection()">Submit correction</button></div>`);
+      <div class="modal-actions"><button class="secondary" onclick="closeModal()">Cancel</button><button class="primary" onclick="submitCorrection()">Done</button></div>`);
   }
   if(type==="note"){
     openModal(`<h2>Add enrollment note</h2>
@@ -118,7 +132,7 @@ function openAction(type){
   }
 }
 function field(label, value){ return `<div class="modal-field"><span>${label}</span><strong>${val(value)}</strong></div>`; }
-window.closeModal=closeModal; window.actionDone=actionDone;
+window.closeModal=closeModal; window.actionDone=actionDone; window.showToast=showToast;
 init();
 
 function handleCorrectionChange(value){
@@ -134,8 +148,8 @@ function submitCorrection(){
     handleCorrectionChange(selected || "other");
     return;
   }
-  const banner = $("correctionSuccess");
-  if(banner) banner.hidden = false;
-  addLog("Name corrected");
+  addLog("Name correction submitted");
+  closeModal();
+  showToast("Done. Application correction submitted.");
 }
 window.handleCorrectionChange=handleCorrectionChange; window.submitCorrection=submitCorrection;
