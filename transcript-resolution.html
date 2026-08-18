@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LAFS Transcript Resolution</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="page-header">
+      <h1>Resolve Transcript Requirement</h1>
+      <p>Devin Martinez</p>
+      <p>Film Production B.S. • August 31, 2026 Start</p>
+    </header>
+
+    <section class="card">
+      <h2>Official High School Transcript</h2>
+      <div class="status-list">
+        <div class="status-row"><span>Document status</span><span id="documentStatus">Received</span></div>
+        <div class="status-row"><span>Received from</span><span>Issuing high school</span></div>
+        <div class="status-row"><span>Received date</span><span>August 11, 2026</span></div>
+        <div class="status-row"><span>Applicant match</span><span id="matchStatus">Pending</span></div>
+        <div class="status-row"><span>Application requirement</span><span id="requirementStatus">Outstanding</span></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Recommended Action</h2>
+      <p>The official transcript has been received but is not currently matched to Devin's application. Match the received document to the applicant record to resolve the outstanding requirement.</p>
+
+      <div class="actions" id="actionButtons">
+        <button class="primary" id="matchBtn">Match Transcript to Application</button>
+        <button id="reviewBtn">Flag for Records Review</button>
+      </div>
+
+      <div class="progress" id="progressState">Matching transcript to applicant record...</div>
+
+      <div class="inline-state success" id="successState">
+        <strong>Transcript requirement resolved</strong><br />
+        The official transcript has been matched to Devin Martinez's application. No additional transcript action is currently required from the applicant.
+      </div>
+
+      <div class="inline-state warning" id="reviewState">
+        <strong>Sent for Records review</strong><br />
+        Document matching requires additional review. Devin's transcript remains received and the application requirement remains outstanding until the review is completed.
+      </div>
+
+      <div class="next-step" id="nextStep">
+        <span class="field-label">Next step</span>
+        <div class="field-value">Continue the admissions review and monitor remaining financial aid requirements.</div>
+        <div class="actions" style="margin-top:10px"><button id="doneBtn">Done</button></div>
+        <div class="inline-state success" id="doneState">Update complete. You can return to the interaction.</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const matchBtn = document.getElementById('matchBtn');
+    const reviewBtn = document.getElementById('reviewBtn');
+    const actionButtons = document.getElementById('actionButtons');
+    const progressState = document.getElementById('progressState');
+    const successState = document.getElementById('successState');
+    const reviewState = document.getElementById('reviewState');
+    const nextStep = document.getElementById('nextStep');
+    const doneBtn = document.getElementById('doneBtn');
+    const doneState = document.getElementById('doneState');
+
+    function resetOutcome() {
+      successState.classList.remove('show');
+      reviewState.classList.remove('show');
+      nextStep.classList.remove('show');
+      doneState.classList.remove('show');
+    }
+
+    matchBtn.addEventListener('click', () => {
+      resetOutcome();
+      matchBtn.disabled = true;
+      reviewBtn.disabled = true;
+      progressState.classList.add('show');
+
+      window.setTimeout(() => {
+        progressState.classList.remove('show');
+        document.getElementById('documentStatus').textContent = 'Received';
+        document.getElementById('matchStatus').textContent = 'Matched';
+        document.getElementById('requirementStatus').textContent = 'Complete';
+        successState.classList.add('show');
+        nextStep.classList.add('show');
+        actionButtons.style.display = 'none';
+      }, 700);
+    });
+
+    reviewBtn.addEventListener('click', () => {
+      resetOutcome();
+      reviewState.classList.add('show');
+      matchBtn.disabled = true;
+      reviewBtn.disabled = true;
+    });
+
+    doneBtn.addEventListener('click', () => {
+      doneState.classList.add('show');
+      doneBtn.disabled = true;
+    });
+  </script>
+</body>
+</html>
