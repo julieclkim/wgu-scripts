@@ -325,3 +325,67 @@ button:disabled {
     width: 100%;
   }
 }
+
+/* Financial Aid Snapshot additions */
+.status-copy {
+  margin: 10px 0 0;
+  color: #444a51;
+}
+
+.progress-steps {
+  display: grid;
+  gap: 8px;
+}
+
+.progress-step {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 30px;
+  padding: 6px 0;
+  border-bottom: 1px solid #eceff2;
+}
+
+.progress-step:last-child {
+  border-bottom: 0;
+}
+
+.progress-marker {
+  width: 20px;
+  flex: 0 0 20px;
+  text-align: center;
+  font-weight: 800;
+}
+
+.progress-step.complete .progress-marker {
+  color: var(--success);
+}
+
+.progress-step.current .progress-marker {
+  color: var(--warning);
+}
+
+.progress-step.complete span:last-child {
+  font-weight: 700;
+}
+
+.progress-step.current span:last-child {
+  color: #4a5057;
+  font-weight: 700;
+}
+
+.guidance-card {
+  background: #fbfcfd;
+}
+
+.guidance-card p {
+  margin: 0;
+}
+
+.guidance-note {
+  margin-top: 10px !important;
+  padding-top: 10px;
+  border-top: 1px solid #eceff2;
+  color: var(--muted);
+  font-size: 13px;
+}
