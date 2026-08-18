@@ -374,3 +374,49 @@ button:disabled {
     width: 100%;
   }
 }
+
+/* Force full-width layout inside embedded agent workspace */
+html,
+body {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+}
+
+body {
+  margin: 0 !important;
+}
+
+.app {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 20px 28px !important;
+}
+
+/* Prevent cards from inheriting any old fixed-width rule */
+.card,
+.page-header {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+/* Desktop workspace */
+@media (min-width: 700px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+/* Narrow side panel */
+@media (max-width: 520px) {
+  .app {
+    padding: 10px !important;
+  }
+
+  .grid {
+    grid-template-columns: 1fr !important;
+  }
+}
